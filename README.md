@@ -1,121 +1,131 @@
-# README
+# Redwood with Auth0 and SIEW(Sign-In-With-Ethereum)
 
 Welcome to [RedwoodJS](https://redwoodjs.com)!
 
-> **Prerequisites**
->
+## Redwood Version
+> - RedwoodJS 3.0+
 > - Redwood requires [Node.js](https://nodejs.org/en/) (>=14.19.x <=16.x) and [Yarn](https://yarnpkg.com/) (>=1.15)
-> - Are you on Windows? For best results, follow our [Windows development setup](https://redwoodjs.com/docs/how-to/windows-development-setup) guide
 
-Start by installing dependencies:
+
+## Setup
+
+clone this repo
+
+Then change into that directory and start by installing dependencies:
 
 ```
 yarn install
 ```
 
-Then change into that directory and start the development server:
+Then create .env file
+
+Adding the following env vars. Using the names exactly as given below and include them in your **redwood.toml**:
 
 ```
-cd my-redwood-project
-yarn redwood dev
+# .env
+
+AUTH0_DOMAIN=
+AUTH0_CLIENT_ID=
+AUTH0_REDIRECT_URI=
+AUTH0_AUDIENCE=
 ```
 
-Your browser should automatically open to http://localhost:8910 where you'll see the Welcome Page, which links out to a ton of great resources.
-
-> **The Redwood CLI**
->
-> Congratulations on running your first Redwood CLI command!
-> From dev to deploy, the CLI is with you the whole way.
-> And there's quite a few commands at your disposal:
-> ```
-> yarn redwood --help
-> ```
-> For all the details, see the [CLI reference](https://redwoodjs.com/docs/cli-commands).
-
-## Prisma and the database
-
-Redwood wouldn't be a full-stack framework without a database. It all starts with the schema. Open the [`schema.prisma`](api/db/schema.prisma) file in `api/db` and replace the `UserExample` model with the following `Post` model:
-
 ```
-model Post {
-  id        Int      @id @default(autoincrement())
-  title     String
-  body      String
-  createdAt DateTime @default(now())
-}
+# redwood.toml
+...
+includeEnvironmentVariables = [
+  'AUTH0_DOMAIN',
+  'AUTH0_CLIENT_ID',
+  'AUTH0_REDIRECT_URI',
+  'AUTH0_AUDIENCE'
+  ]
+...
 ```
 
-Redwood uses [Prisma](https://www.prisma.io/), a next-gen Node.js and TypeScript ORM, to talk to the database. Prisma's schema offers a declarative way of defining your app's data models. And Prisma [Migrate](https://www.prisma.io/migrate) uses that schema to make database migrations hassle-free:
+## Setting up Auth0 and SIWE
+
+1. To get your application keys, Sign up and complete the "Create Application" section of the SPA Quickstart.
+(siwe1)
+
+2. Turn to Settings, input the following details from basic information
 
 ```
-yarn rw prisma migrate dev
+# .env
 
-# ...
+// Same as Domain
+AUTH0_DOMAIN=dev-xxxxxxxx.us.auth0.com
 
-? Enter a name for the new migration: › create posts
+// Same as Client ID
+// this key is an example
+AUTH0_CLIENT_ID=nkHL74Qin7Scd5HbPd2UCBxEDHMV7ViH
+
+// We will fill it in the next Step
+AUTH0_REDIRECT_URI=
+
+// Same as Your Auth0 API, default name is your domain name + /api/v2
+AUTH0_AUDIENCE=https://dev-xxxxxxxx.us.auth0.com/api/v2/
 ```
 
-> `rw` is short for `redwood`
+(siwe2)
 
-You'll be prompted for the name of your migration. `create posts` will do.
+> - Application Type should be Single Page Application and Token Endpoint Auth is None
 
-Now let's generate everything we need to perform all the CRUD (Create, Retrieve, Update, Delete) actions on our `Post` model:
+3. Go to Authentication -> Social -> find Sign-in with Ethereum
 
-```
-yarn redwood g scaffold post
-```
+(siwe3)
 
-Navigate to http://localhost:8910/posts/new, fill in the title and body, and click "Save":
+4. Open a new browser tap, Follow the instruction here(https://auth0.com/blog/sign-in-with-ethereum-siwe-now-available-on-auth0/)
 
-Did we just create a post in the database? Yup! With `yarn rw g scaffold <model>`, Redwood created all the pages, components, and services necessary to perform all CRUD actions on our posts table.
+> - Hints: curl command doesn't work properly in window command prompt. Powershell or git bash is preferred.
 
-## Frontend first with Storybook
 
-Don't know what your data models look like?
-That's more than ok—Redwood integrates Storybook so that you can work on design without worrying about data.
-Mockup, build, and verify your React components, even in complete isolation from the backend:
+5. Go back to your Application, fill in the callback URLs
+and logout URLs
 
-```
-yarn rw storybook
-```
+> - Don't forget add the callback URL of siwe!
 
-Before you start, see if the CLI's `setup ui` command has your favorite styling library:
+(siwe4)
+
+Finish the .env setting
 
 ```
-yarn rw setup ui --help
+# .env
+
+// Same as Domain
+AUTH0_DOMAIN=dev-xxxxxxxx.us.auth0.com
+
+// Same as Client ID
+// this key is an example
+AUTH0_CLIENT_ID=nkHL74Qin7Scd5HbPd2UCBxEDHMV7ViH
+
+// This is a target url after login, must be same as Allowed Callback URLs
+AUTH0_REDIRECT_URI=http://localhost:8910/profile
+
+// Same as Your Auth0 API, default name is your domain name + /api/v2
+AUTH0_AUDIENCE=https://dev-xxxxxxxx.us.auth0.com/api/v2/
 ```
 
-## Testing with Jest
 
-It'd be hard to scale from side project to startup without a few tests.
-Redwood fully integrates Jest with the front and the backends and makes it easy to keep your whole app covered by generating test files with all your components and services:
 
-```
-yarn rw test
-```
-
-To make the integration even more seamless, Redwood augments Jest with database [scenarios](https://redwoodjs.com/docs/testing.md#scenarios)  and [GraphQL mocking](https://redwoodjs.com/docs/testing.md#mocking-graphql-calls).
-
-## Ship it
-
-Redwood is designed for both serverless deploy targets like Netlify and Vercel and serverful deploy targets like Render and AWS:
+7. Change into that directory and start by
 
 ```
-yarn rw setup deploy --help
+yarn rw dev
 ```
 
-Don't go live without auth!
-Lock down your front and backends with Redwood's built-in, database-backed authentication system ([dbAuth](https://redwoodjs.com/docs/authentication#self-hosted-auth-installation-and-setup)), or integrate with nearly a dozen third party auth providers:
 
-```
-yarn rw setup auth --help
-```
+## Example
 
-## Next Steps
+(siwe5)
+(siwe6)
+(siwe7)
 
-The best way to learn Redwood is by going through the comprehensive [tutorial](https://redwoodjs.com/docs/tutorial/foreword) and joining the community (via the [Discourse forum](https://community.redwoodjs.com) or the [Discord server](https://discord.gg/redwoodjs)).
+> - Select and Scan with QR code, and signature in your wallet
 
-## Quick Links
+(siwe8)
 
-- Stay updated: read [Forum announcements](https://community.redwoodjs.com/c/announcements/5), follow us on [Twitter](https://twitter.com/redwoodjs), and subscribe to the [newsletter](https://redwoodjs.com/newsletter)
-- [Learn how to contribute](https://redwoodjs.com/docs/contributing)
+
+## FAQ
+
+Q. No response after clicking "Sign-In with Ethereum"
+A. Please check your wallet if there is signature requested or not. For futher information please check sign-in with ethereum document(https://docs.login.xyz/general-information/siwe-overview/eip-4361)
